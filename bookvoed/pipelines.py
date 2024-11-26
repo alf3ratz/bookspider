@@ -36,9 +36,10 @@ class BookvoedPipeline:
             return item
 
         cursor = self.conn.cursor()
-        name = item['name']
-        author = item['author']
-        price = item['price']
+        name = item['name'] if item['name'] is not None else 'Unknown name'
+        author = item['author'] if item['author'] is not None else 'Unknown Author'
+        price = item['price'] if item['price'] else '0 ₽'
+
         cursor.execute("""
         INSERT INTO items (name, author, price)
         VALUES (%s, %s, %s)
