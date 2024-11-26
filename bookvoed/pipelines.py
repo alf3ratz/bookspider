@@ -7,8 +7,8 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 import os
-import psycopg
-from psycopg import sql
+import psycopg2
+from psycopg2 import sql
 
 
 
@@ -18,8 +18,8 @@ class BookvoedPipeline:
         db_user = os.getenv('db_user')
         db_pswd = os.getenv('db_pswd')
         db_host = os.getenv('db_host')
-        self.conn = psycopg.connect(database=db_name, user=db_user,
-                                     password=db_pswd, host=db_host)
+        self.conn = psycopg2.connect(database=db_name, user=db_user,
+                                     password=db_pswd, host=db_host, port=6432)
         cursor = self.conn.cursor()
         cursor.execute("""
             create table if not exists books (
