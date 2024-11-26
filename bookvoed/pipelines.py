@@ -6,8 +6,10 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-import psycopg2
 import os
+import psycopg2
+from psycopg2 import sql
+
 
 
 class BookvoedPipeline:
@@ -16,7 +18,7 @@ class BookvoedPipeline:
         db_user = os.getenv('db_user')
         db_pswd = os.getenv('db_pswd')
         db_host = os.getenv('db_host')
-        self.conn = psycopg2.connect(dbname=db_name, user=db_user,
+        self.conn = psycopg2.connect(database=db_name, user=db_user,
                                      password=db_pswd, host=db_host)
         cursor = self.conn.cursor()
         cursor.execute("""
