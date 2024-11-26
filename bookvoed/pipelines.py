@@ -42,8 +42,8 @@ class BookvoedPipeline:
             price = item['price'] if item['price'] else '0 ₽'
 
             cursor.execute("""
-            INSERT INTO items (name, author, price)
-            VALUES (%s, %s, %s)
+            insert into books (name, author, price)
+            values (%s, %s, %s)
             """,
                            (name, author, price))
             self.conn.commit()
@@ -55,8 +55,3 @@ class BookvoedPipeline:
             if self.conn:
                 self.conn.rollback()
             print("Transaction rolled back due to error.")
-        finally:
-            if self.conn:
-                cursor.close()
-                self.conn.close()
-                print("Connection closed.")
