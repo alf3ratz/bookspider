@@ -11,7 +11,6 @@ import psycopg2
 from psycopg2 import sql
 
 
-
 class BookvoedPipeline:
     def __init__(self):
         db_name = os.getenv('db_name')
@@ -40,7 +39,11 @@ class BookvoedPipeline:
         name = item['name']
         author = item['author']
         price = item['price']
-        cursor.execute(f'INSERT INTO items (name, author, price) VALUES ({name}, {author}, {price})')
+        cursor.execute("""
+        INSERT INTO items (name, author, price)
+        VALUES (%s, %s, %s)
+        """,
+                       (name, author, price))
         self.conn.commit()
 
         return item
