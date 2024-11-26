@@ -20,11 +20,11 @@ class BookvoedPipeline:
                                      password=db_pswd, host=db_host)
         cursor = self.conn.cursor()
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS items (
+            create table if not exists books (
                 id serial PRIMARY KEY,
-                name VARCHAR(265),
-                author VARCHAR(256),
-                price VARCHAR(256)             
+                name VARCHAR(255),
+                author VARCHAR(255),
+                price VARCHAR(255)             
             )
         """)
         self.connection.commit()
