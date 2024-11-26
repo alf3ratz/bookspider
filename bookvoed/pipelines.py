@@ -29,18 +29,18 @@ class BookvoedPipeline:
                 price VARCHAR(255)             
             )
         """)
-        self.connection.commit()
+        self.conn.commit()
 
     def process_item(self, item, spider):
         if 'error' in item:
             print('Can\'t add error item to database')
             return item
 
-        cursor = self.connection.cursor()
+        cursor = self.conn.cursor()
         name = item['name']
         author = item['author']
         price = item['price']
         cursor.execute(f'INSERT INTO items (name, author, price) VALUES ({name}, {author}, {price})')
-        self.connection.commit()
+        self.conn.commit()
 
         return item
