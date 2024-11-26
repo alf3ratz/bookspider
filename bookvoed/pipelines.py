@@ -31,7 +31,7 @@ class BookvoedPipeline:
         self.conn.commit()
 
     def process_item(self, item, spider):
-        try
+        try:
             if 'error' in item:
                 print('Can\'t add error item to database')
                 return item
