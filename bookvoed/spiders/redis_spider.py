@@ -1,28 +1,27 @@
+import os
 import scrapy
-from scrapy_redis.spiders import RedisSpider
+import re
+import logging
+import redis
 
-class MyRedisSpider(RedisSpider):
-    name = 'redis_bookspider'
 
-    # Запросы будут извлекаться из Redis-очереди, заданной в REDIS_URL
-    redis_key = 'book_urls'
+class Urls2queueSpider(scrapy.Spider):
+    name = "urls2queue"
+    allowed_domains = ["www.bookvoed.ru"]
+    start_urls = ["https://www.bookvoed.ru/catalog"]
+    redis_url = os.getenv('redis_url')
 
     def parse(self, response):
-        for book in response.css('div.product-card'):
-            try:
-                yield {
-                    'name': book.css('div.product-card::attr(data-product-name)').get(),
-                    'author': book.css('span.ui-comma-separated-links__tag::text').get(),
-                    'price': book.css('span.price-info__price::text').get().replace(u'\xa0', u'')
-                }
-            except:
-                yield {
-                    'name': book.css('div.product-card::attr(data-product-name)').get(),
-                    'error': "Can't parse data"
-                }
+        last_page = 0
+        for page in response.css('a.base-link--active.base-link--exact-active.app-pagination__item.base-link'):
+            result = re.search(r'\d+$', page.attrib['href'])
+            if result is not None:
+                num = int(result.group(0))
+                if num > last_page:
+                    last_page = num
 
-        next_page = response.css(
-            "a.base-link--active.base-link--exact-active.ui-button.ui-button--size-s.ui-button--color-secondary-blue").attrib[
-            'href']
-        if next_page is not None:
-            yield response.follow(next_page, callback=self.parse)
+        redisClient = redis.from_url(redis_url)
+
+        # for i in range(last_page):
+        for i in range(100):
+            redisClient.lpush('bookspider:start_urls', 'https://www.bookvoed.ru/catalog?page=' + str(i + 1))
